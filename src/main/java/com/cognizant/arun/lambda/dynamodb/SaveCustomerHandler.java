@@ -11,6 +11,10 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
 import com.cognizant.arun.lambda.dynamodb.bean.Customer;
 
 public class SaveCustomerHandler {
@@ -24,6 +28,8 @@ public class SaveCustomerHandler {
 		this.initDynamoDbClient();
 
 		Customer customerResponse = persistData(customerRequest);
+		
+		sendMessage(customerResponse);
 
 		return customerResponse;
 	}
@@ -52,6 +58,20 @@ public class SaveCustomerHandler {
 		AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 		client.setRegion(Region.getRegion(REGION));
 		this.dynamoDb = new DynamoDB(client);
+	}
+	
+	private void sendMessage(Customer customer){
+		
+		AmazonSNS snsClient = new AmazonSNSClient();
+		snsClient.setRegion(Region.getRegion(REGION));
+		String topicArn = "arn:aws:sns:ap-south-1:983255663009:CustomerNotification";
+		                     		
+		final PublishRequest publishRequest = new PublishRequest(topicArn, customer.toString());
+		final PublishResult publishResponse = snsClient.publish(publishRequest);
+
+		// Print the MessageId of the message.
+		System.out.println("Message: " + customer.toString());
+		System.out.println("MessageId: " + publishResponse.getMessageId());
 	}
 
 }

@@ -1,5 +1,8 @@
 package com.cognizant.arun.lambda;
 
+import java.util.HashMap;
+import java.util.List;
+
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
@@ -10,6 +13,7 @@ import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.cognizant.arun.lambda.dynamodb.bean.Customer;
+import com.google.gson.Gson;
 
 public class SendEmailHandler {
 
@@ -22,16 +26,23 @@ public class SendEmailHandler {
 	// The email body for recipients with non-HTML email clients.
 	static final String TEXTBODY = "This email was sent through Amazon SES by Arun for Demo " + "using the AWS SDK for Java.";
 
-	public void handleRequest(Customer customerRequest, Context context) {
+	public void handleRequest(HashMap customerRequest, Context context) {
+		
+		System.out.println ("Customer request is : " +  (String)(((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message")));
+		
+		String customerString = (String)((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message");
+
+		Gson gson = new Gson(); 
+		Customer customer = gson.fromJson(customerString, Customer.class);
 
 		try {
 			
 			// The HTML body for the email.
-		    String body = "<h1>Account # " + customerRequest.getId() + " Created </h1>";
+		    String body = "<h1>Account # " + customer.getId() + " Created </h1>";
 			
 			AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
 					.withRegion(Regions.AP_SOUTH_1).build();
-			SendEmailRequest request = new SendEmailRequest().withDestination(new Destination().withToAddresses(customerRequest.getEmailAddress()))
+			SendEmailRequest request = new SendEmailRequest().withDestination(new Destination().withToAddresses(customer.getEmailAddress()))
 					.withMessage(new Message()
 							.withBody(new Body().withHtml(new Content().withCharset("UTF-8").withData(body))
 									.withText(new Content().withCharset("UTF-8").withData(TEXTBODY)))
