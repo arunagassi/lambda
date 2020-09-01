@@ -16,7 +16,7 @@ Resources:
         Properties:
             CodeUri: s3://lambda-deployment-artifacts-arunagassi/lambda-0.0.1-SNAPSHOT.jar
             Handler: com.cognizant.arun.lambda.dynamodb.SaveCustomerHandler::handleRequest
-            Runtime: java8
+            Runtime: corretto8
 
             Events:
                 Customr:
