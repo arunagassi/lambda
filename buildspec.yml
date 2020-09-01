@@ -13,3 +13,4 @@ artifacts:
   files:
     - template.yml
     - outputtemplate.yml
+    - target/lambda-0.0.1-SNAPSHOT-shaded.jar
