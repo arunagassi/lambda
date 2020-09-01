@@ -9,7 +9,7 @@ phases:
       - export BUCKET=lambda-deployment-artifacts-arunagassi
       - aws cloudformation package --template-file template.yml --s3-bucket $BUCKET --output-template-file outputtemplate.yml
 artifacts:
-  type: zip
+  type: jar
   files:
     - template.yml
     - outputtemplate.yml
