@@ -16,10 +16,10 @@ Resources:
         Properties:
             CodeUri: s3://lambda-deployment-artifacts-arunagassi/lambda-0.0.1-SNAPSHOT.jar
             Handler: com.cognizant.arun.lambda.dynamodb.SaveCustomerHandler::handleRequest
-            Runtime: corretto8
+            Runtime: java8
 
             Events:
-                Customr:
+                Customer:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
                         Path: /customer
