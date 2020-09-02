@@ -7,7 +7,12 @@ phases:
     commands:
       - mvn package shade:shade
       - aws s3 ls
-      - aws s3 cp target/lambda-0.0.1-SNAPSHOT-shaded.jar s3://lambda-deployment-artifacts-arunagassi/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=arunagassi@gmail.com
+      - cd target
+      - pwd
+      - ls
+      - aws s3 cp lambda-0.0.1-SNAPSHOT-shaded.jar s3://lambda-deployment-artifacts-arunagassi/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=arunagassi@gmail.com
+      - cd ../
+      - pwd
       - ls
       - export BUCKET=lambda-deployment-artifacts-arunagassi
       - aws cloudformation package --template-file template.yml --s3-bucket $BUCKET --output-template-file outputtemplate.yml
