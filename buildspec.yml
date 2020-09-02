@@ -10,7 +10,7 @@ phases:
       - cd target
       - pwd
       - ls
-      - aws s3 cp lambda-0.0.1-SNAPSHOT-shaded.jar s3://lambda-deployment-artifacts-arunagassi/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=arunagassi@gmail.com
+      - aws s3 cp lambda-0.0.1-SNAPSHOT.jar s3://lambda-deployment-artifacts-arunagassi/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=arunagassi@gmail.com
       - cd ../
       - pwd
       - ls
