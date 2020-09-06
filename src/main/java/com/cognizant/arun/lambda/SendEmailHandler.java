@@ -28,6 +28,8 @@ public class SendEmailHandler {
 
 	public void handleRequest(HashMap customerRequest, Context context) {
 		
+		System.out.println ("Request is : " + customerRequest);
+		
 		System.out.println ("Customer request is : " +  (String)(((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message")));
 		
 		String customerString = (String)((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message");

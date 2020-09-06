@@ -11,7 +11,7 @@ Globals:
 
 Resources:
 
-    Loan:
+    Customer:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
             CodeUri: s3://lambda-deployment-artifacts-arunagassi/lambda-0.0.1-SNAPSHOT.jar
@@ -23,4 +23,46 @@ Resources:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
                         Path: /customer
+                        Method: post
+                        
+    Loan:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: s3://lambda-deployment-artifacts-arunagassi/lambda-0.0.1-SNAPSHOT.jar
+            Handler: com.cognizant.arun.lambda.dynamodb.SaveLoanHandler::handleRequest
+            Runtime: java8
+
+            Events:
+                Loan:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /loan
+                        Method: post
+                        
+    Mail:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: s3://lambda-deployment-artifacts-arunagassi/lambda-0.0.1-SNAPSHOT.jar
+            Handler: com.cognizant.arun.lambda.SendEmailHandler::handleRequest
+            Runtime: java8
+
+            Events:
+                Loan:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /mail
+                        Method: post
+                        
+    Authorizer:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: s3://lambda-deployment-artifacts-arunagassi/lambda-0.0.1-SNAPSHOT.jar
+            Handler: com.cognizant.arun.lambda.Authorizer::handleRequest
+            Runtime: java8
+
+            Events:
+                Loan:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /authorizer
                         Method: post
