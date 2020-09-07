@@ -8,8 +8,8 @@ public class Statement {
 
     public final String Action = "execute-api:Invoke";
 
-    public String Effect;
-    public String Resource;
+    String Effect;
+    String Resource;
 
     private Statement(Builder builder) {
         this.Effect = builder.effect;

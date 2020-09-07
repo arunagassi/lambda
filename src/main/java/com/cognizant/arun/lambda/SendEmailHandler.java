@@ -25,12 +25,14 @@ public class SendEmailHandler {
 
 	// The email body for recipients with non-HTML email clients.
 	static final String TEXTBODY = "This email was sent through Amazon SES by Arun for Demo " + "using the AWS SDK for Java.";
+	
+	static final String ENCODING = "UTF-8";
 
-	public void handleRequest(HashMap customerRequest, Context context) {
+	public void handleRequest(HashMap customerRequest, Context context) {	
 		
-		System.out.println ("Request is : " + customerRequest);
+		context.getLogger().log( "Request is : " + customerRequest);
 		
-		System.out.println ("Customer request is : " +  (String)(((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message")));
+		context.getLogger().log( "Customer request is : " +  (String)(((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message")));
 		
 		String customerString = (String)((HashMap)(((HashMap)(((List)(customerRequest.get("Records"))).get(0))).get("Sns"))).get("Message");
 
@@ -46,14 +48,14 @@ public class SendEmailHandler {
 					.withRegion(Regions.AP_SOUTH_1).build();
 			SendEmailRequest request = new SendEmailRequest().withDestination(new Destination().withToAddresses(customer.getEmailAddress()))
 					.withMessage(new Message()
-							.withBody(new Body().withHtml(new Content().withCharset("UTF-8").withData(body))
-									.withText(new Content().withCharset("UTF-8").withData(TEXTBODY)))
-							.withSubject(new Content().withCharset("UTF-8").withData(SUBJECT)))
+							.withBody(new Body().withHtml(new Content().withCharset(ENCODING).withData(body))
+									.withText(new Content().withCharset(ENCODING).withData(TEXTBODY)))
+							.withSubject(new Content().withCharset(ENCODING).withData(SUBJECT)))
 					.withSource(FROM);
 			client.sendEmail(request);
-			System.out.println("Email sent!");
+			context.getLogger().log("Email sent!");
 		} catch (Exception ex) {
-			System.out.println("The email was not sent. Error message: " + ex.getMessage());
+			context.getLogger().log("The email was not sent. Error message: " + ex.getMessage());
 		}
 	}
 

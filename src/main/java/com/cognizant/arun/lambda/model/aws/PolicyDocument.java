@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 public class PolicyDocument {
 
     public final String Version = "2012-10-17";
-    public List<Statement> Statement;
+    List<Statement> Statement;
 
     private PolicyDocument(Builder builder) {
         this.Statement = builder.statements;

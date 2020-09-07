@@ -31,11 +31,11 @@ public class Authorizer implements RequestHandler<APIGatewayProxyRequestEvent, A
         Map<String, String> headers = request.getHeaders();
         String authorization = headers.get("Authorization");
         
-        System.out.println("authorization" + authorization);
+        context.getLogger().log("authorization" + authorization);
 
         String jwt = authorization.substring("Bearer ".length());
         
-        System.out.println("jwt" + jwt);
+        context.getLogger().log("jwt" + jwt);
 
         Map<String, String> ctx = new HashMap<>();
         ctx.put("username", JwtUtils.extractUserName(jwt));

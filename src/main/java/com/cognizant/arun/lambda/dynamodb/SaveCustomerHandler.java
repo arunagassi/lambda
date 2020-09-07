@@ -21,15 +21,15 @@ public class SaveCustomerHandler {
 
 	private DynamoDB dynamoDb;
 
-	private String DYNAMODB_TABLE_NAME = "Customer";
-	private Regions REGION = Regions.AP_SOUTH_1;
+	private static final String DYNAMO_DB_TABLE_NAME = "Customer";
+	private static final Regions REGION = Regions.AP_SOUTH_1;
 
 	public Customer handleRequest(Customer customerRequest, Context context) {
 		this.initDynamoDbClient();
 
 		Customer customerResponse = persistData(customerRequest);
 		
-		sendMessage(customerResponse);
+		sendMessage(customerResponse, context);
 
 		return customerResponse;
 	}
@@ -41,12 +41,12 @@ public class SaveCustomerHandler {
 		customerMap.put("lastName", customer.getLastName());
 		customerMap.put("password", customer.getPassword());
 		customerMap.put("emailAddress", customer.getEmailAddress());
-		customerMap.put("password", customer.getPhoneNumber());
+		customerMap.put("phoneNumber", customer.getPhoneNumber());
 		customerMap.put("street", customer.getAddress().getStreet());
 		customerMap.put("city", customer.getAddress().getCity());
 		customerMap.put("zip", customer.getAddress().getZipcode());
 		
-		dynamoDb.getTable(DYNAMODB_TABLE_NAME)
+		dynamoDb.getTable(DYNAMO_DB_TABLE_NAME)
 				 .putItem(new Item().withPrimaryKey("id", uuid.toString()).withString("first_name", customer.getFirstName()).withMap("customerMap", customerMap));
 		
 		customer.setId(uuid.toString());
@@ -60,7 +60,7 @@ public class SaveCustomerHandler {
 		this.dynamoDb = new DynamoDB(client);
 	}
 	
-	private void sendMessage(Customer customer){
+	private void sendMessage(Customer customer, Context context){
 		
 		AmazonSNS snsClient = new AmazonSNSClient();
 		snsClient.setRegion(Region.getRegion(REGION));
@@ -70,8 +70,8 @@ public class SaveCustomerHandler {
 		final PublishResult publishResponse = snsClient.publish(publishRequest);
 
 		// Print the MessageId of the message.
-		System.out.println("Message: " + customer.toString());
-		System.out.println("MessageId: " + publishResponse.getMessageId());
+		context.getLogger().log("Message: " + customer.toString());
+		context.getLogger().log("MessageId: " + publishResponse.getMessageId());
 	}
 
 }

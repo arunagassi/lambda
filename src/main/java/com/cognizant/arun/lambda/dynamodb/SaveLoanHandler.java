@@ -17,13 +17,15 @@ public class SaveLoanHandler {
 
 	private DynamoDB dynamoDb;
 
-	private String DYNAMODB_TABLE_NAME = "Loan";
-	private Regions REGION = Regions.AP_SOUTH_1;
+	private static final String DYNAMO_DB_TABLE_NAME = "Loan";
+	private static final Regions REGION = Regions.AP_SOUTH_1;
 
 	public Loan handleRequest(Loan loanRequest, Context context) {
 		this.initDynamoDbClient();
 
 		Loan loanResponse = persistData(loanRequest);
+		
+	    context.getLogger().log("Respoinse: " + loanResponse.toString());
 
 		return loanResponse;
 	}
@@ -38,7 +40,7 @@ public class SaveLoanHandler {
 		loanMap.put("durationOfLoan", loan.getDurationOfLoan());
 		loanMap.put("rateOfIntrest", loan.getRateOfIntrest());
 
-		dynamoDb.getTable(DYNAMODB_TABLE_NAME).putItem(new Item().withPrimaryKey("id", uuid.toString())
+		dynamoDb.getTable(DYNAMO_DB_TABLE_NAME).putItem(new Item().withPrimaryKey("id", uuid.toString())
 				.withString("customer_id", loan.getCustomerId()).withMap("loanMap", loanMap));
 
 		loan.setId(uuid.toString());
