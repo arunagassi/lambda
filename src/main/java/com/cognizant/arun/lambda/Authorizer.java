@@ -27,44 +27,41 @@ import com.cognizant.arun.lambda.util.JwtUtils;
 
 public class Authorizer implements RequestHandler<APIGatewayProxyRequestEvent, AuthorizerResponse> {
 
-    public AuthorizerResponse handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-        Map<String, String> headers = request.getHeaders();
-        String authorization = headers.get("Authorization");
-        
-        context.getLogger().log("authorization" + authorization);
+	public AuthorizerResponse handleRequest(APIGatewayProxyRequestEvent request, Context context) {
+		Map<String, String> headers = request.getHeaders();
+		String authorization = headers.get("Authorization");
 
-        String jwt = authorization.substring("Bearer ".length());
-        
-        context.getLogger().log("jwt" + jwt);
+		context.getLogger().log("authorization " + authorization);
 
-        Map<String, String> ctx = new HashMap<>();
-        ctx.put("username", JwtUtils.extractUserName(jwt));
+		String jwt = authorization.substring("Bearer ".length());
 
-        APIGatewayProxyRequestEvent.ProxyRequestContext proxyContext = request.getRequestContext();
-        APIGatewayProxyRequestEvent.RequestIdentity identity = proxyContext.getIdentity();
+		String userName = JwtUtils.extractUserName(jwt);
 
-        String arn = String.format("arn:aws:execute-api:ap-south-1:%s:%s/%s/%s/%s",
-                proxyContext.getAccountId(),
-                proxyContext.getApiId(),
-                proxyContext.getStage(),
-                proxyContext.getHttpMethod(),
-                "*");
+		context.getLogger().log("userName " + userName);
 
-        Statement statement = Statement.builder()
-                .resource(arn).effect("Allow")
-                .build();
+		context.getLogger().log("jwt " + jwt);
 
-        PolicyDocument policyDocument = PolicyDocument.builder()
-                .statements(
-                        Collections.singletonList(statement)
-                ).build();
+		Map<String, String> ctx = new HashMap<>();
+		ctx.put("username", userName);
 
-        return AuthorizerResponse.builder()
-                .principalId(identity.getAccountId())
-                .policyDocument(policyDocument)
-                .context(ctx)
-                .build();
-    }
+		APIGatewayProxyRequestEvent.ProxyRequestContext proxyContext = request.getRequestContext();
+		APIGatewayProxyRequestEvent.RequestIdentity identity = proxyContext.getIdentity();
+
+		String arn = String.format("arn:aws:execute-api:ap-south-1:%s:%s/%s/%s/%s", proxyContext.getAccountId(),
+				proxyContext.getApiId(), proxyContext.getStage(), /*proxyContext.getHttpMethod()*/"POST", "*");
+
+		context.getLogger().log("arn " + arn);
+
+		Statement statement = null;
+		if ("arunagassi".equalsIgnoreCase(userName)) {
+			statement = Statement.builder().resource(arn).effect("Allow").build();
+		} else {
+			statement = Statement.builder().resource(arn).effect("Deny").build();
+		}
+		PolicyDocument policyDocument = PolicyDocument.builder().statements(Collections.singletonList(statement))
+				.build();
+		return AuthorizerResponse.builder().principalId(identity.getAccountId()).policyDocument(policyDocument)
+				.context(ctx).build();
+
+	}
 }
-
-

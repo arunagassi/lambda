@@ -24,7 +24,20 @@ public class AuthorizerTest {
 		request.setRequestContext(getProxyRequestContext());	
 		Authorizer authorizer = new Authorizer();
 		AuthorizerResponse response = authorizer.handleRequest(request, context);
-		Assert.assertNotNull(response);
+		Assert.assertEquals("Allow" , response.getPolicyDocument().Statement.get(0).Effect);
+	}
+	
+	@Test
+	public void handleRequestTestDeny() {
+		Context context = new TestContext();
+		APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent();
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("Authorization", "Bearer arun");
+		request.setHeaders(map);		
+		request.setRequestContext(getProxyRequestContext());	
+		Authorizer authorizer = new Authorizer();
+		AuthorizerResponse response = authorizer.handleRequest(request, context);
+		Assert.assertEquals("Deny" , response.getPolicyDocument().Statement.get(0).Effect);
 	}
 	
 	public ProxyRequestContext getProxyRequestContext(){
