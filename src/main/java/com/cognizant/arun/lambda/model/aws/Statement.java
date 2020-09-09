@@ -10,6 +10,7 @@ public class Statement {
 
     public String Effect;
     public String Resource;
+    
 
     private Statement(Builder builder) {
         this.Effect = builder.effect;
